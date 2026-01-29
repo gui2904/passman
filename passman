@@ -1,9 +1,12 @@
 #!/usr/bin/env python3
 
 import json
+import shutil
+import subprocess
 import string
 import secrets
 import argparse
+import getpass
 from cryptography.fernet import Fernet
 from pathlib import Path
 
@@ -68,10 +71,6 @@ def load_key():
         KEY_FILE.chmod(0o600)
     return KEY_FILE.read_bytes()
 
-def save_key(key):
-    with open("secret.key", "wb") as key_file:
-        key_file.write(key)
-
 def encrypt_message(message):
     key = load_key()
     f = Fernet(key)
@@ -87,14 +86,19 @@ def load_credentials():
     ensure_app_dir()
     if not CREDENTIALS_FILE.exists():
         return {}
-    return json.loads(CREDENTIALS_FILE.read_text())
+    try:
+        return json.loads(CREDENTIALS_FILE.read_text())
+    except json.JSONDecodeError:
+        print("credentials.json is corrupted.")
+        return {}
 
 def save_credentials(credentials):
     ensure_app_dir()
     tmp = CREDENTIALS_FILE.with_suffix(".tmp")
-    tmp.write_text(json.dumps(credentials))
+    tmp.write_text(json.dumps(credentials, indent=2, sort_keys=True))
     tmp.chmod(0o600)
     tmp.replace(CREDENTIALS_FILE)
+    CREDENTIALS_FILE.chmod(0o600)
 
 def add_credential(name, username, password, force=False):
     credentials = load_credentials()
@@ -163,17 +167,29 @@ def delete_credentials(name, yes=False):
     save_credentials(credentials)
     print("Credential deleted successfully.")
 
+# Function to copy password to clipboard.    
+def copy_to_clipboard(text: str) -> bool:
+    if shutil.which("wl-copy"):
+        subprocess.run(["wl-copy"], input=text, text=True, check=True)
+        return True
+    if shutil.which("xclip"):
+        subprocess.run(["xclip", "-selection", "clipboard"], input=text, text=True, check=True)
+        return True
+    return False
+
 # Command-Line Interface
 def main():
     parser = argparse.ArgumentParser(description="Simple Password Manager")
-    parser.add_argument("command", choices=["add", "view", "edit", "list", "delete", "rename"], help="Command to run")
+    parser.add_argument("command", choices=["add", "view", "edit", "list", "delete", "rename", "gen"], help="Command to run")
     parser.add_argument("name", nargs="?",help="Name of the credential")
     parser.add_argument("--new-name", help="New name for rename")
     parser.add_argument("--username", help="Username for the credential")
-    parser.add_argument("--password", help="Password for the credential")
+    parser.add_argument("--prompt", action="store_true", help="Prompt for password (won't be shown or saved in shell history)")
     parser.add_argument("--force", action="store_true", help="Overwrite if destination exists")
     parser.add_argument("--yes", action="store_true", help="Assume yes (delete without prompt)")
     parser.add_argument("--length", type=int, default=16, help="Generated password length") 
+    parser.add_argument("--copy", action="store_true", help="Copy password to clipboard")
+    parser.add_argument("--print", dest="do_print", action="store_true", help="Print password to stdout (careful)")
     args = parser.parse_args()
 
     if args.command == "list":
@@ -183,10 +199,32 @@ def main():
         if not args.name or not args.username:
             print("Name and --username are required to add a credential.")
             return
-        password = args.password or generate_password(length=args.length)
-        if not password:
-            print("Failed to add credential: password could not be generated.")
-            return
+
+        # 1) Determine password first (prompt or generate)
+        if args.prompt:
+            p1 = getpass.getpass("Password: ")
+            p2 = getpass.getpass("Confirm: ")
+            if p1 != p2:
+                print("Passwords do not match.")
+                return
+            if not p1:
+                print("Password cannot be empty.")
+                return
+            password = p1
+        else:
+            password = generate_password(length=args.length)
+
+        # 2) Then optinal clipboard/print
+        if args.copy:
+            if copy_to_clipboard(password):
+                print("Password copied to clipboard.")
+            else:
+                print("No clipboard tool found (install wl-clipboard or xclip.)")
+
+        if args.do_print:
+            print(password)
+
+         # 3) Finally store it  
         add_credential(args.name, args.username, password, force=args.force)
 
     elif args.command == "view":
@@ -199,7 +237,18 @@ def main():
         if not args.name:
             print("Name is required for edit.")
             return
-        edit_credential(args.name, args.username, args.password)
+        new_password = None
+        if args.prompt:
+            p1 = getpass.getpass("New password: ")
+            p2 = getpass.getpass("Confirm: ")
+            if p1 != p2:
+                print("Passwords do not match.")
+                return
+            if not p1:
+                print("Password cannot be empty.")
+                return
+            new_password = p1
+        edit_credential(args.name, args.username, new_password)
 
     elif args.command == "delete":
         if not args.name:
@@ -212,6 +261,17 @@ def main():
             print("Rename requires: old name and --new-name")
             return
         rename_credential(args.name, args.new_name, force=args.force)
+
+    elif args.command == "gen":
+        pw = generate_password(length=args.length)
+        if args.copy:
+            if copy_to_clipboard(pw):
+                print("Password copied to clipboard")
+            else:
+                print("No clipboard tool found (install wl-clipboard or xclip).")
+        if args.do_print or not args.copy:
+            print(pw)
+        return
 
 if __name__ == "__main__":
     main()
