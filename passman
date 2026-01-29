@@ -1,6 +1,7 @@
 #!/usr/bin/env python3
 
 import json
+import sys
 import shutil
 import subprocess
 import string
@@ -169,13 +170,16 @@ def delete_credentials(name, yes=False):
 
 # Function to copy password to clipboard.    
 def copy_to_clipboard(text: str) -> bool:
-    if shutil.which("wl-copy"):
-        subprocess.run(["wl-copy"], input=text, text=True, check=True)
-        return True
-    if shutil.which("xclip"):
-        subprocess.run(["xclip", "-selection", "clipboard"], input=text, text=True, check=True)
-        return True
-    return False
+    try:
+        if shutil.which("wl-copy"):
+            subprocess.run(["wl-copy"], input=text, text=True, check=True)
+            return True
+        if shutil.which("xclip"):
+            subprocess.run(["xclip", "-selection", "clipboard"], input=text, text=True, check=True)
+            return True
+        return False
+    except subprocess.CalledProcessError:
+        return False
 
 # Command-Line Interface
 def main():
@@ -274,4 +278,10 @@ def main():
         return
 
 if __name__ == "__main__":
-    main()
+    try:
+        main()
+    except KeyboardInterrupt:
+        print("\nCancelled.")
+        sys.exit(130)
+    except BrokenPipeError:
+        sys.exit(0)
