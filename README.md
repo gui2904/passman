@@ -45,8 +45,6 @@
 - **Automatic** secure file permissions
 - **Simple** JSON storage with encryption layer
 
----
-
 ## Get Started
 ### Requirements
 
@@ -60,13 +58,38 @@
   - Wayland
   ```bash
   sudo apt install wl-clipboard #For Ubuntu/Debian
-  or
   sudo pacman -S wl-clipboard #For ArchLinux
   ```
 
   - X11
   ```bash
-  sudo apt install xclip
+  sudo apt install xclip #For Ubuntu/Debian
+  sudo pacman -S xclip #For ArchLinux
   ```
 
+### Clone the repository
+```bash
+git clone https://github.com/gui2904/passman.git
+cd passman
+chmod +x passman
+```
+Optional: You can move it to your local bin directory for easier user
+```bash
+sudo mv passman /usr/local/bin
+```
+
+### Usage
+To add credential with automatic password generation, for the user I recommend adding either the username of the website or the email you use
+```bash
+passman add github --username myuser or user@mail.com
+```
+You can add a --copy parameter, so the password goes directly to your clipboard
+```bash
+passman add github --username myuser --copy
+```
+
+Prompt for password manually
+```bash
+passman add github --username myuser --prompt
+```
 
