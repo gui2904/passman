@@ -6,10 +6,6 @@
 <div align="center">
   <p>
     Passman is a lightweight command-line password manager written in Python. Unlike many password managers, it does not depend on any external API, network connection, service or any form of external connection. 
-    <br>
-    It securely stores credentials using encryption, generates strong passwords, and provides a simple CLI workflow for managing logins locally.
-    <br>
-    Designed for developers, terminal users, and anyone who prefers a minimal, private password solution.
   </p>
 </div>
 
@@ -103,6 +99,8 @@ passman edit github --prompt #only edits the password
 passman edit github --username newuser --prompt #edits the username and password
 ```
 
+---
+
 ### Delete credentials
 ```bash
 passman delete github
@@ -112,10 +110,14 @@ You can also skip confirmation by using:
 passman delete github --yes
 ```
 
+---
+
 ### Rename credentials
 ```bash
 passman rename github --new-name gh
 ```
+
+---
 
 ### Generate password
 To generate a random password, you can use this. But keep in mind that the password will be outputted in the terminal
@@ -132,3 +134,22 @@ If you want to copy the password and also output it, you can use:
 ```bash
 passman gen --copy --print
 ```
+
+You can also set the lenght of the password by using:
+```bash
+passman gen --length 20 #can also add the --copy param
+```
+
+> [!IMPORTANT]
+> If you lose secret.key, your stored passwords cannot be recovered.
+> Back it up securely.
+
+## Security notes
+- Uses [Fernet] symmetric encryption via cryptography
+- Encryption key stored locally with restricted permissions
+- Clipboard copies will be stored in your clipboard, keep that in mind
+- Intended for personal/local usage
+- Backup encryption key safely
+
+## License
+This project is licensed under the MIT License. See the LICENSE file for details
