@@ -52,9 +52,9 @@
 
 - Python **3.8+**
 - `cryptography` package:
-
-```bash
-pip install cryptography
+  ```bash
+  pip install cryptography
+  ```
 
 - Optional clipboard tools:
   - Wayland
