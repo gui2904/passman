@@ -59,12 +59,14 @@
 - Optional clipboard tools:
   - Wayland
   ```bash
-  sudo pacman -S wl-clipboard
+  sudo apt install wl-clipboard #For Ubuntu/Debian
   or
-  sudo apt install wl-clipboard
+  sudo pacman -S wl-clipboard #For ArchLinux
+  ```
 
   - X11
   ```bash
   sudo apt install xclip
+  ```
 
 
