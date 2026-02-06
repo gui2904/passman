@@ -72,6 +72,8 @@ chmod +x passman
 Optional: You can move it to your local bin directory for easier user
 ```bash
 sudo mv passman /usr/local/bin
+or
+sudo mv passman ~/.local/bin
 ```
 
 ## Usage
@@ -79,7 +81,7 @@ sudo mv passman /usr/local/bin
 ### Add credentials
 To add credential with automatic password generation. For the `--username`, I recommend adding either the username you use for the website or the email you use
 ```bash
-passman add github --username myuser or user@mail.com
+passman add github --username myuser #Or user@mail.com
 ```
 You can add a `--copy` parameter, so the password goes directly to your clipboard
 ```bash
