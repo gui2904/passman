@@ -91,12 +91,28 @@ Prompt for password manually
 passman add github --username myuser --prompt
 ```
 
+---
+
+### View credentials
+```bash
+passman view github
+```
+
+---
+
 ### Edit credentials
 To edit credentials, you can use:
 ```bash
 passman edit github --username newuser #only edits the username
 passman edit github --prompt #only edits the password
 passman edit github --username newuser --prompt #edits the username and password
+```
+
+---
+
+### List credentials
+```bash
+passman list
 ```
 
 ---
@@ -138,6 +154,14 @@ passman gen --copy --print
 You can also set the lenght of the password by using:
 ```bash
 passman gen --length 20 #can also add the --copy param
+```
+
+### Storage Location
+Passman stores data locally:
+```arduino
+~/.config/passman/
+├── secret.key
+└── credentials.json
 ```
 
 > [!IMPORTANT]
