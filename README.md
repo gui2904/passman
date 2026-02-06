@@ -6,9 +6,9 @@
 <div align="center">
   <p>
     Passman is a lightweight command-line password manager written in Python. Unlike many password managers, it does not depend on any external API, network connection, service or any form of external connection. 
-    <br>>
+    <br>
     It securely stores credentials using encryption, generates strong passwords, and provides a simple CLI workflow for managing logins locally.
-    <br>>
+    <br>
     Designed for developers, terminal users, and anyone who prefers a minimal, private password solution.
   </p>
 </div>
@@ -45,7 +45,7 @@
 - **Automatic** secure file permissions
 - **Simple** JSON storage with encryption layer
 
-```
+---
 
 ## Get Started
 ### Requirements
