@@ -78,12 +78,14 @@ Optional: You can move it to your local bin directory for easier user
 sudo mv passman /usr/local/bin
 ```
 
-### Usage
-To add credential with automatic password generation, for the user I recommend adding either the username of the website or the email you use
+## Usage
+
+### Add credentials
+To add credential with automatic password generation. For the `--username`, I recommend adding either the username you use for the website or the email you use
 ```bash
 passman add github --username myuser or user@mail.com
 ```
-You can add a --copy parameter, so the password goes directly to your clipboard
+You can add a `--copy` parameter, so the password goes directly to your clipboard
 ```bash
 passman add github --username myuser --copy
 ```
@@ -93,3 +95,40 @@ Prompt for password manually
 passman add github --username myuser --prompt
 ```
 
+### Edit credentials
+To edit credentials, you can use:
+```bash
+passman edit github --username newuser #only edits the username
+passman edit github --prompt #only edits the password
+passman edit github --username newuser --prompt #edits the username and password
+```
+
+### Delete credentials
+```bash
+passman delete github
+```
+You can also skip confirmation by using:
+```bash
+passman delete github --yes
+```
+
+### Rename credentials
+```bash
+passman rename github --new-name gh
+```
+
+### Generate password
+To generate a random password, you can use this. But keep in mind that the password will be outputted in the terminal
+```bash
+passman gen
+```
+
+To copy the generated password to your clipboard, and also keeping the password from outputting to the terminal, you can use:
+```bash
+passman gen --copy
+```
+
+If you want to copy the password and also output it, you can use:
+```bash
+passman gen --copy --print
+```
